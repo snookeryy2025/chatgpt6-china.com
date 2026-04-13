@@ -1,0 +1,12 @@
+# IndexNow API Key
+#
+# 此文件用于验证你对站点的所有权
+# 将此文件部署到站点根目录的 .well-known/ 目录下
+#
+# 如何获取 IndexNow Key:
+# 1. 访问 Bing Webmaster Tools: https://www.bing.com/webmasters
+# 2. 添加你的站点
+# 3. 在 IndexNow 设置中获取 API Key
+# 4. 将获取的 Key 填入 .env 文件的 INDEXNOW_KEY
+#
+# 注意: 此文件在本地保留，部署时需要上传到服务器对应位置

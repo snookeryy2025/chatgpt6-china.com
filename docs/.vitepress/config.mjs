@@ -104,6 +104,7 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: 'ChatGPT指南', link: '/ai-tools/chatgpt-guide' },
+      { text: 'ChatGPT中文博客', link: '/blog/chatgpt/what-is-chatgpt' },
       { text: 'GPT模型', link: '/models/gpt-models' },
       { text: '国内使用', link: '/usage/domestic-usage' },
       { text: '关于', link: '/about' },

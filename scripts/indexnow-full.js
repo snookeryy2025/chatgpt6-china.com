@@ -141,8 +141,12 @@ async function submitToIndexNow(urls) {
       console.log(`正在提交到 ${endpoint}...`);
       const result = await postJson(endpoint, payload);
 
-      if (result.status === 200) {
-        console.log(`✓ ${endpoint} 提交成功`);
+      if (result.status === 200 || result.status === 202) {
+        // 200 = 成功, 202 = 已接受（URL 收到，key 验证待处理）
+        const msg = result.status === 200
+          ? `✓ ${endpoint} 提交成功`
+          : `✓ ${endpoint} 已接受（等待 key 验证）`;
+        console.log(msg);
         successCount++;
       } else if (result.status === 429) {
         console.log(`⚠ ${endpoint} 请求过于频繁，等待后重试...`);

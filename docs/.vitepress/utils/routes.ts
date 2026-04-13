@@ -151,7 +151,10 @@ export function generateSidebarConfig() {
   const usageRoutes = allRoutes.filter(r => r.url.startsWith('/usage/') && r.url !== '/usage/')
   const claudeRoutes = allRoutes.filter(r => r.url.startsWith('/claude-cn/') && r.url !== '/claude-cn/')
 
+  const blogRoutes = allRoutes.filter(r => r.url.startsWith('/blog/') && r.url !== '/blog/')
   // 二级目录
+   // 进一步分类 blog
+   const chatgptCnBlog = blogRoutes.filter(r => r.url.includes('/blog/chatgpt'))
   
 
 
@@ -161,6 +164,13 @@ export function generateSidebarConfig() {
         text: 'ChatGPT指南',
         collapsed: false,
         items: aiToolRoutes.map(item => ({ text: item.title, link: item.url }))
+      }
+    ] : [],
+    '/blog/chatgpt/': chatgptCnBlog.length > 0 ? [
+      {
+        text: 'ChatGPT中文博客',
+        collapsed: false,
+        items: chatgptCnBlog.map(item => ({ text: item.title, link: item.url }))
       }
     ] : [],
     '/models/': modelsRoutes.length > 0 ? [

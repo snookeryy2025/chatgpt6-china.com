@@ -12,11 +12,11 @@
  * 2. 运行: npm run indexnow:updated
  */
 
+import { config } from 'dotenv';
 import fs from 'fs';
+import https from 'https';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import https from 'https';
-import { config } from 'dotenv';
 
 // 加载环境变量
 config();
@@ -25,7 +25,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ============ 配置区域 ============
-const SITE_URL = process.env.SITE_URL || 'https://chatgpt6-china.com';
+const SITE_URL = process.env.SITE_URL || 'https://www.chatgpt6-china.com';
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || '';
 const INDEXNOW_KEY_LOCATION = process.env.INDEXNOW_KEY_LOCATION || `${SITE_URL}/.well-known/indexnow-key.txt`;
 const RECORD_FILE = path.join(__dirname, '..', '.indexnow-record.json');
@@ -48,11 +48,17 @@ function scanMarkdownFile(filePath, baseDir) {
   let urlPath;
   const fileName = path.basename(filePath);
 
-  if (fileName === 'index.md' || fileName === 'README.md') {
+  // README.md 通常是目录索引页面，不作为独立页面处理
+  if (fileName === 'README.md') {
+    return null;
+  }
+
+  if (fileName === 'index.md') {
     const dirPath = path.dirname(relativePath);
     urlPath = dirPath === '.' ? '/' : `/${dirPath.replace(/\\/g, '/')}/`;
   } else {
-    urlPath = `/${relativePath.replace(/\\/g, '/').replace(/\.md$/, '')}`;
+    // 普通文章（.html 后缀，VitePress cleanUrls: false）
+    urlPath = `/${relativePath.replace(/\\/g, '/').replace(/\.md$/, '.html')}`;
   }
 
   return {
@@ -77,7 +83,10 @@ function scanDocsDir(dir, baseDir) {
         results.push(...scanDocsDir(fullPath, baseDir));
       }
     } else if (entry.name.endsWith('.md')) {
-      results.push(scanMarkdownFile(fullPath, baseDir));
+      const result = scanMarkdownFile(fullPath, baseDir);
+      if (result) {
+        results.push(result);
+      }
     }
   }
 
@@ -169,18 +178,33 @@ function postJson(url, data) {
  * 提交 URL 列表到 IndexNow
  */
 async function submitToIndexNow(urls) {
-  if (urls.length === 0) {
+  // URL 去重（移除末尾斜杠后的重复）
+  const seen = new Set();
+  const uniqueUrls = [];
+  for (const url of urls) {
+    const normalized = url.endsWith('/') ? url.slice(0, -1) : url;
+    if (!seen.has(normalized)) {
+      seen.add(normalized);
+      uniqueUrls.push(url);
+    }
+  }
+
+  if (urls.length !== uniqueUrls.length) {
+    console.log(`\n去重: ${urls.length} -> ${uniqueUrls.length} 个 URL`);
+  }
+
+  if (uniqueUrls.length === 0) {
     console.log('\n没有需要提交的 URL（所有文章均无变化）');
     return { successCount: 0, failCount: 0 };
   }
 
-  console.log(`\n准备提交 ${urls.length} 个 URL 到 IndexNow...\n`);
+  console.log(`\n准备提交 ${uniqueUrls.length} 个 URL 到 IndexNow...\n`);
 
   const payload = {
     host: new URL(SITE_URL).hostname,
     key: INDEXNOW_KEY,
     keyLocation: INDEXNOW_KEY_LOCATION.replace(SITE_URL, ''),
-    urlList: urls,
+    urlList: uniqueUrls,
   };
 
   let successCount = 0;

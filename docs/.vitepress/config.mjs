@@ -22,21 +22,21 @@ export default defineConfig({
       'author': {
         '@type': 'Organization',
         'name': 'ChatGPT6指南',
-        'url': 'https://chatgpt6-china.com',
+        'url': 'https://www.chatgpt6-china.com',
       },
       'publisher': {
         '@type': 'Organization',
         'name': 'ChatGPT6指南',
         'logo': {
           '@type': 'ImageObject',
-          'url': 'https://chatgpt6-china.com/logo.svg',
+          'url': 'https://www.chatgpt6-china.com/logo.svg',
         },
       },
       'datePublished': '2026-04-13',
       'dateModified': new Date().toISOString().split('T')[0],
       'mainEntityOfPage': {
         '@type': 'WebPage',
-        '@id': 'https://chatgpt6-china.com/',
+        '@id': 'https://www.chatgpt6-china.com/',
       },
       'keywords': 'ChatGPT, GPT-4, GPT-4o, GPT-5, OpenAI, AI聊天, 国内ChatGPT, ChatGPT镜像',
     })],

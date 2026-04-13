@@ -49,18 +49,22 @@ function scanMarkdownFiles(dir, baseDir) {
         urls.push(...scanMarkdownFiles(fullPath, baseDir));
       }
     } else if (file.name.endsWith('.md')) {
-      // 跳过 index.md 和 README.md
-      if (file.name === 'index.md' || file.name === 'README.md') {
-        // 目录首页，转换为 /
-        const dirPath = path.relative(baseDir, dir);
-        const urlPath = dirPath === '' ? '/' : `/${dirPath.replace(/\\/g, '/')}/`;
-        urls.push(`${SITE_URL}${urlPath}`);
-      } else {
-        // 普通文章，移除 .md 后缀
-        const relativePath = path.relative(baseDir, fullPath);
-        const urlPath = `/${relativePath.replace(/\\/g, '/').replace(/\.md$/, '')}`;
-        urls.push(`${SITE_URL}${urlPath}`);
+      // 跳过 README.md（不作为独立页面）
+      if (file.name === 'README.md') {
+        continue;
       }
+
+      let urlPath;
+      if (file.name === 'index.md') {
+        // 目录首页
+        const dirPath = path.relative(baseDir, dir);
+        urlPath = dirPath === '' ? '/' : `/${dirPath.replace(/\\/g, '/')}/`;
+      } else {
+        // 普通文章（.html 后缀，VitePress cleanUrls: false）
+        const relativePath = path.relative(baseDir, fullPath);
+        urlPath = `/${relativePath.replace(/\\/g, '/').replace(/\.md$/, '.html')}`;
+      }
+      urls.push(`${SITE_URL}${urlPath}`);
     }
   }
 
@@ -83,28 +87,30 @@ function getExtraUrls() {
 function postJson(url, data) {
   return new Promise((resolve, reject) => {
     const urlObj = new URL(url);
+    const body = JSON.stringify(data);
     const options = {
       hostname: urlObj.hostname,
       path: urlObj.pathname,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body),
       },
     };
 
     const req = https.request(options, (res) => {
-      let body = '';
-      res.on('data', (chunk) => body += chunk);
+      let responseBody = '';
+      res.on('data', (chunk) => responseBody += chunk);
       res.on('end', () => {
         resolve({
           status: res.statusCode,
-          body,
+          body: responseBody,
         });
       });
     });
 
     req.on('error', reject);
-    req.write(JSON.stringify(data));
+    req.write(body);
     req.end();
   });
 }
@@ -123,7 +129,7 @@ async function submitToIndexNow(urls) {
   const payload = {
     host: new URL(SITE_URL).hostname,
     key: INDEXNOW_KEY,
-    keyLocation: INDEXNOW_KEY_LOCATION.replace(SITE_URL, ''),
+    keyLocation: INDEXNOW_KEY_LOCATION,
     urlList: urls,
   };
 

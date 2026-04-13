@@ -7,6 +7,7 @@
     "build": "vitepress build docs",
     "preview": "vitepress preview docs",
     "indexnow:updated": "node scripts/indexnow-updated.js",
+    "indexnow:full": "node scripts/indexnow-full.js",
     "deploy": "bash scripts/deploy.sh"
   },
   "devDependencies": {

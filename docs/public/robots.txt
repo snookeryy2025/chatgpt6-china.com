@@ -10,7 +10,7 @@ User-agent: Googlebot
 Allow: /
 
 # Sitemap
-Sitemap: https://chatgpt6-china.com/sitemap.xml
+Sitemap: https://www.chatgpt6-china.com/sitemap.xml
 
 # IndexNow
 Remote-endpoint: https://www.bing.com/indexnow

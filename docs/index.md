@@ -1,9 +1,13 @@
 ---
 layout: home
-title: "ChatGPT 官网：OpenAI GPT-6 国内使用指南"
+title: "ChatGPT 官网：OpenAI GPT 智能AI模型国内使用指南"
 description: "提供 ChatGPT 官方网址登录入口与国内可用的中文版使用教程，覆盖 GPT-4、GPT-4o、o1 与 GPT-5 的实用指南。含镜像网站推荐、注册官网全流程、常见问题与安全建议，帮助国内用户无障碍使用 ChatGPT。无需翻墙即可使用GPT-4和GPT-5。"
-author: "ChatGPT6指南"
+author: "ChatGPT指南"
 date: "2026-04-13"
+head:
+  - - meta
+    - name: keywords
+      content: "ChatGPT,ChatGPT官网,ChatGPT入口,OpenAI,ChatGPT国内使用,ChatGPT中国,ChatGPT中文版,国内ChatGPT,ChatGPT无需翻墙,ChatGPT镜像网站,ChatGPT注册,ChatGPT Plus,GPT-4,GPT-4o,GPT-5,GPT-3.5,OpenAI官网,ChatGPT怎么用,ChatGPT使用教程,AI聊天机器人,人工智能助手,AI工具"
 hero:
   name: "ChatGPT 6 "
   text: "OpenAI 最新、最智能的AI模型"

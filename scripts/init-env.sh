@@ -8,14 +8,14 @@ if [ ! -f ".env" ]; then
   else
     cat > .env << 'EOF'
 # IndexNow API Key（从 Bing Webmaster Tools 获取）
-INDEXNOW_KEY=your-indexnow-api-key-here
-INDEXNOW_KEY_LOCATION=https://chatgpt6-china.com/.well-known/indexnow-key.txt
+INDEXNOW_KEY=5ef3feed53d046cba5cef04ac56c0758
+INDEXNOW_KEY_LOCATION=https://www.chatgpt6-china.com/.well-known/indexnow-key.txt
 
 # 网站域名
-SITE_URL=https://chatgpt6-china.com
+SITE_URL=https://www.chatgpt6-china.com
 
 # Bing Webmaster Tools API Key
-BING_API_KEY=your-bing-api-key-here
+BING_API_KEY=898f9e3de7be4c55be813a083436470d
 EOF
     echo ".env 文件已创建，请编辑并填入你的配置"
   fi

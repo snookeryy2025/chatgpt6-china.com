@@ -7,11 +7,11 @@
  * 2. 运行: npm run indexnow:full
  */
 
+import { config } from 'dotenv';
 import fs from 'fs';
+import https from 'https';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import https from 'https';
-import { config } from 'dotenv';
 
 // 加载环境变量
 config();
@@ -20,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ============ 配置区域 ============
-const SITE_URL = process.env.SITE_URL || 'https://chatgpt6-china.com';
+const SITE_URL = process.env.SITE_URL || 'https://www.chatgpt6-china.com';
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || '';
 const INDEXNOW_KEY_LOCATION = process.env.INDEXNOW_KEY_LOCATION || `${SITE_URL}/.well-known/indexnow-key.txt`;
 const BING_API_URL = 'https://www.bing.com/indexnow';

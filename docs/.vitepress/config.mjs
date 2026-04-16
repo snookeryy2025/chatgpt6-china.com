@@ -17,11 +17,11 @@ export default defineConfig({
     ['script', { type: 'application/ld+json' }, JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'Article',
-      'headline': 'ChatGPT 官网：OpenAI GPT-6 国内使用指南',
+      'headline': 'ChatGPT 使用教程：OpenAI GPT-6 国内使用指南',
       'description': '提供 ChatGPT 官方网址登录入口与国内可用的中文版使用教程，覆盖 GPT-4、GPT-4o、o1 与 GPT-5 的实用指南。含镜像网站推荐、注册官网全流程、常见问题与安全建议，帮助国内用户无障碍使用 ChatGPT。',
       'author': {
         '@type': 'Organization',
-        'name': 'ChatGPT6指南',
+        'name': 'ChatGPT使用教程',
         'url': 'https://www.chatgpt6-china.com',
       },
       'publisher': {
@@ -99,12 +99,11 @@ export default defineConfig({
 
   themeConfig: {
     logo: '/logo.svg',
-    siteTitle: 'ChatGPT6指南',
+    siteTitle: 'ChatGPT使用教程',
 
     nav: [
       { text: '首页', link: '/' },
       { text: 'ChatGPT指南', link: '/ai-tools/chatgpt-guide' },
-      { text: 'ChatGPT中文博客', link: '/blog/chatgpt/what-is-chatgpt' },
       { text: 'GPT模型', link: '/models/gpt-models' },
       { text: '国内使用', link: '/usage/domestic-usage' },
       { text: '关于', link: '/about' },

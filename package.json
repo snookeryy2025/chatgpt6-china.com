@@ -6,9 +6,10 @@
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
     "preview": "vitepress preview docs",
-    "indexnow:updated": "node scripts/indexnow-updated.js",
-    "indexnow:full": "node scripts/indexnow-full.js",
-    "deploy": "bash scripts/deploy.sh"
+    "track-changes": "node scripts/track-changes.js",
+    "submit-indexnow": "node scripts/submit-indexnow.js",
+    "submit-indexnow:full": "node scripts/submit-indexnow.js --full",
+    "submit-indexnow:dry": "node scripts/submit-indexnow.js --full --dry-run"
   },
   "devDependencies": {
     "vitepress": "^1.6.3",

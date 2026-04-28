@@ -87,6 +87,10 @@ function scanMarkdownFiles(dir: string, baseDir: string = dir): RouteItem[] {
           if (priority === undefined) {
             if (url === '/' || url === '/index.html') {
               priority = 1.0
+            } else if (url.includes('/chatgpt/') && !url.includes('/guides/') && !url.includes('/blog/')) {
+              // 顶级 chatgpt/ 目录（docs/chatgpt/）优先级最高
+              priority = 0.9
+              changefreq = 'daily'
             } else if (url.includes('/guides/chatgpt/') || url.includes('/blog/chatgpt-cn/')) {
               priority = 0.9
               changefreq = 'daily'
@@ -144,19 +148,33 @@ export interface SidebarGroup {
 // 生成侧边栏配置（现在从自动扫描的路由生成）
 export function generateSidebarConfig() {
   const allRoutes = getAllRoutes()
-  
+
   // 按路径分类路由
   const aiToolRoutes = allRoutes.filter(r => r.url.startsWith('/ai-tools/') && r.url !== '/ai-tools/')
   const modelsRoutes = allRoutes.filter(r => r.url.startsWith('/models/') && r.url !== '/models/')
   const usageRoutes = allRoutes.filter(r => r.url.startsWith('/usage/') && r.url !== '/usage/')
   const claudeRoutes = allRoutes.filter(r => r.url.startsWith('/claude-cn/') && r.url !== '/claude-cn/')
 
-  const blogRoutes = allRoutes.filter(r => r.url.startsWith('/blog/') && r.url !== '/blog/')
-  // 二级目录
-   // 进一步分类 blog
-   const chatgptCnBlog = blogRoutes.filter(r => r.url.includes('/blog/chatgpt'))
-  
+  // docs/chatgpt/ 顶级目录
+  const chatgptRoutes = allRoutes.filter(r => r.url.startsWith('/chatgpt/') && r.url !== '/chatgpt/')
 
+  // docs/guides/chatgpt/
+  const guidesChatgptRoutes = allRoutes.filter(r => r.url.startsWith('/guides/chatgpt/') && r.url !== '/guides/chatgpt/')
+  // docs/guides/chatgpt-dev/
+  const chatgptDevRoutes = allRoutes.filter(r => r.url.startsWith('/guides/chatgpt-dev/') && r.url !== '/guides/chatgpt-dev/')
+  // docs/guides/gemini/
+  const geminiRoutes = allRoutes.filter(r => r.url.startsWith('/guides/gemini/') && r.url !== '/guides/gemini/')
+  // docs/guides/deepseek/
+  const deepseekRoutes = allRoutes.filter(r => r.url.startsWith('/guides/deepseek/') && r.url !== '/guides/deepseek/')
+  // docs/guides/ 根级（排除子目录）
+  const guidesRootRoutes = allRoutes.filter(r =>
+    r.url.startsWith('/guides/') &&
+    r.url !== '/guides/' &&
+    !r.url.startsWith('/guides/chatgpt/') &&
+    !r.url.startsWith('/guides/chatgpt-dev/') &&
+    !r.url.startsWith('/guides/gemini/') &&
+    !r.url.startsWith('/guides/deepseek/')
+  )
 
   return {
     '/ai-tools/': aiToolRoutes.length > 0 ? [
@@ -166,13 +184,40 @@ export function generateSidebarConfig() {
         items: aiToolRoutes.map(item => ({ text: item.title, link: item.url }))
       }
     ] : [],
-    '/blog/chatgpt/': chatgptCnBlog.length > 0 ? [
+    '/chatgpt/': chatgptRoutes.length > 0 ? [
       {
-        text: 'ChatGPT中文博客',
+        text: 'ChatGPT指南',
         collapsed: false,
-        items: chatgptCnBlog.map(item => ({ text: item.title, link: item.url }))
+        items: chatgptRoutes.map(item => ({ text: item.title, link: item.url }))
       }
     ] : [],
+    '/guides/': [
+      guidesRootRoutes.length > 0 ? {
+        text: '使用指南',
+        collapsed: false,
+        items: guidesRootRoutes.map(item => ({ text: item.title, link: item.url }))
+      } : null,
+      guidesChatgptRoutes.length > 0 ? {
+        text: 'ChatGPT指南',
+        collapsed: false,
+        items: guidesChatgptRoutes.map(item => ({ text: item.title, link: item.url }))
+      } : null,
+      chatgptDevRoutes.length > 0 ? {
+        text: 'OpenAI 开发指南',
+        collapsed: false,
+        items: chatgptDevRoutes.map(item => ({ text: item.title, link: item.url }))
+      } : null,
+      geminiRoutes.length > 0 ? {
+        text: 'Gemini 指南',
+        collapsed: false,
+        items: geminiRoutes.map(item => ({ text: item.title, link: item.url }))
+      } : null,
+      deepseekRoutes.length > 0 ? {
+        text: 'DeepSeek 指南',
+        collapsed: false,
+        items: deepseekRoutes.map(item => ({ text: item.title, link: item.url }))
+      } : null,
+    ].filter(Boolean),
     '/models/': modelsRoutes.length > 0 ? [
       {
         text: 'GPT模型',
@@ -206,10 +251,11 @@ export function getAllRoutes(): RouteItem[] {
 // 按类别组织的路由（用于 HTML sitemap）
 export function getRoutesByCategory() {
   const allRoutes = getAllRoutes()
-  
+
   // 按路径自动分类
   const categories: { [key: string]: RouteItem[] } = {
     '主要页面': [],
+    'ChatGPT 指南': [],
     'ChatGPT 使用指南': [],
     'ChatGPT 国内使用': [],
     'ChatGPT 博客': [],
@@ -220,10 +266,13 @@ export function getRoutesByCategory() {
     '写作指南': [],
     '其他': []
   }
-  
+
   for (const route of allRoutes) {
     if (route.url === '/' || route.url === '/index.html') {
       categories['主要页面'].push(route)
+    } else if (route.url.startsWith('/chatgpt/') && !route.url.includes('/guides/') && !route.url.includes('/blog/')) {
+      // 顶级 docs/chatgpt/ 目录
+      categories['ChatGPT 指南'].push(route)
     } else if (route.url.includes('/guides/chatgpt/')) {
       categories['ChatGPT 使用指南'].push(route)
     } else if (route.url.includes('/chatgpt-cn/')) {
@@ -232,8 +281,6 @@ export function getRoutesByCategory() {
       categories['ChatGPT 博客'].push(route)
     } else if (route.url.includes('/ai/chatgpt/')) {
       categories['AI 工具'].push(route)
-    } else if (route.url.includes('/chatgpt/')) {
-      categories['ChatGPT 使用指南'].push(route)
     } else if (route.url.includes('/guides/deepseek/')) {
       categories['DeepSeek 指南'].push(route)
     } else if (route.url.includes('/guides/gemini/')) {
@@ -243,12 +290,12 @@ export function getRoutesByCategory() {
     } else if (route.url.includes('/blog/writing/')) {
       categories['写作指南'].push(route)
     } else if (route.url.includes('/guides/') || route.url.includes('/blog/')) {
-      categories['ChatGPT 博客'].push(route)
+      categories['ChatGPT 使用指南'].push(route)
     } else {
       categories['其他'].push(route)
     }
   }
-  
+
   // 过滤掉空分类，并转换为所需格式
   return Object.entries(categories)
     .filter(([_, links]) => links.length > 0)

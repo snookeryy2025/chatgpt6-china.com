@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { generateSidebarConfig } from './utils/routes'
+import { generateSitemaps } from './utils/sitemap'
 
 export default defineConfig({
   title: 'ChatGPT 中文版',
@@ -103,7 +104,7 @@ export default defineConfig({
 
     nav: [
       { text: '首页', link: '/' },
-      { text: 'ChatGPT指南', link: '/ai-tools/chatgpt-guide' },
+      { text: 'ChatGPT指南', link: '/guides/' },
       { text: 'GPT模型', link: '/models/gpt-models' },
       { text: '国内使用', link: '/usage/domestic-usage' },
       { text: '关于', link: '/about' },
@@ -167,11 +168,14 @@ export default defineConfig({
     lineNumbers: false,
   },
 
-  sitemap: {
+  /* sitemap: {
     hostname: 'https://www.chatgpt6-china.com',
     lastmod: 'date',
+  }, */
+  buildEnd: async ({ outDir }) => {
+    // 生成 sitemap
+    await generateSitemaps(outDir)
   },
-
   vite: {
     build: {
       rollupOptions: {
